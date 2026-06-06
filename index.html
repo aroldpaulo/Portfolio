@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Arold Paulo B. Tacumba | Portfolio</title>
+    <!-- Google Fonts: Clean & modern -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- GIF Background -->
+<div class="bg-fallback"></div>
+<img class="gif-background" src="photos/deta.gif" alt="animated background" onerror="this.style.opacity='0';">
+
+<!-- SLIDING DOOR INTRO ANIMATION -->
+<div class="sliding-door-overlay" id="doorOverlay">
+    <div class="door-left" id="doorLeft">
+        <div class="door-content">
+            AROLD<br><span>Information Technology</span>
+        </div>
+    </div>
+    <div class="door-right" id="doorRight">
+        <div class="door-content">
+            TACUMBA<br><span>Web Developer</span>
+        </div>
+    </div>
+</div>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="container nav-flex">
+        <div class="logo"><a href="#">Portfolio</a></div>
+        <ul class="nav-links">
+            <li><a href="#home">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact" class="nav-btn">Contact</a></li>
+        </ul>
+    </div>
+</div>
+
+<main>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <div class="hero-tag">INFORMATION TECHNOLOGY STUDENT</div>
+                <h1>AROLD<br>PAULO B. TACUMBA</h1>
+                <div class="hero-subtitle">Web Developer</div>
+                <p class="hero-desc">Passionate about learning, technology, and continuous improvement. Building practical skills through academic projects and hands-on experiences.</p>
+                <div class="btn-group">
+                    <a href="#projects" class="btn-primary">View Projects <i class="fas fa-arrow-right"></i></a>
+                    <a href="#contact" class="btn-outline">Get in touch</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="profile-circle">
+                    <!-- Replace 'profile.jpg' with your actual profile picture file name -->
+                    <img src="photos/profile.jpg" alt="Arold profile">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me Section -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-card">
+                <p>Hello! I am <strong>Arold Paulo B. Tacumba</strong>, an Information Technology student at Davao del Norte State College with a passion for learning and self-improvement. While I am still developing my programming skills, I am eager to learn, improve, and gain experience through academic projects and hands-on practice. My goal is to continuously grow my knowledge in technology and become a skilled IT professional in the future.</p>
+                <p>I am particularly interested in web development and enjoy building websites, exploring new technologies, and working on projects that challenge my creativity and problem-solving abilities. Through continuous learning and hands-on experience, I strive to grow both technically and professionally while building a strong foundation for a future career in the IT industry.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills">
+        <div class="container">
+            <h2 class="section-title">Skills</h2>
+            <div class="skills-grid">
+                <span class="skill-item">HTML</span>
+                <span class="skill-item">CSS</span>
+                <span class="skill-item">JavaScript</span>
+                <span class="skill-item">Java</span>
+                <span class="skill-item">PHP</span>
+                <span class="skill-item">GitHub</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section - 2 projects with simple screenshot areas -->
+    <section id="projects">
+        <div class="container">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                <!-- Project 1: Chibugan Ordering System -->
+                <div class="project-card">
+                    <div class="project-screenshot">
+                        <!-- Replace 'chibugan-screenshot.jpg' with your actual screenshot file name -->
+                        <img src="photos/chibugan.png" alt="Chibugan Ordering System Screenshot">
+                    </div>
+                    <div class="project-content">
+                        <h3>Chibugan Ordering System</h3>
+                        <p>CHIBUGAN is a food ordering platform with an integrated credit wallet system. Customers order meals and pay using wallet credits, while cashiers manage order status and admins oversee users, menu, and transactions. The project showcases advanced database features: stored procedures for business logic, triggers for automation, views for reporting, indexes for performance, and foreign keys for data integrity—all delivered through a responsive, role‑based interface.</p>
+                        <a href="Chibugan/index.php" class="project-link">Open Project <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <!-- Project 2: SparkBank Management System -->
+                <div class="project-card">
+                    <div class="project-screenshot">
+                        <!-- Replace 'sparkbank-screenshot.jpg' with your actual screenshot file name -->
+                        <img src="photos/bank.png" alt="SparkBank Management System Screenshot">
+                    </div>
+                    <div class="project-content">
+                        <h3>SparkBank Management System</h3>
+                        <p>A banking application designed to simulate basic banking operations, including deposits, withdrawals, and real-time balance tracking. The project demonstrates programming logic, user input validation, financial transaction processing, and interactive UI animations inspired by modern digital wallets like GCash.</p>
+                        <a href="bank/bank.html" class="project-link">Open Project <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section with Working Links -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div class="contact-card">
+                <p>Feel free to connect with me through the platforms below.</p>
+                <div class="contact-grid">
+                    <!-- Email link -->
+                    <a href="mailto:aroldpaulo@gmail.com" class="contact-link">
+                        <i class="fas fa-envelope"></i>
+                        <span>Email</span>
+                    </a>
+                    <!-- Facebook link -->
+                    <a href="https://www.facebook.com/aroldpaulo.borbon" target="_blank" rel="noopener noreferrer" class="contact-link">
+                        <i class="fab fa-facebook"></i>
+                        <span>Facebook</span>
+                    </a>
+                    <!-- GitHub link -->
+                    <a href="https://github.com/aroldpaulo" target="_blank" rel="noopener noreferrer" class="contact-link">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub</span>
+                    </a>
+                    <!-- LinkedIn link -->
+                    <a href="https://www.linkedin.com/in/arold-paulo-tacumba-669a51413/" target="_blank" rel="noopener noreferrer" class="contact-link">
+                        <i class="fab fa-linkedin"></i>
+                        <span>LinkedIn</span>
+                    </a>
+                </div>
+                <div style="margin-top: 0.5rem; font-size:0.85rem;">Aspiring Web Developer • Information Technology Student</div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>Arold Paulo B. Tacumba — IT Portfolio © 2025</p>
+</footer>
+
+<script>
+    // SLIDING DOOR ANIMATION
+    window.addEventListener('load', () => {
+        const doorLeft = document.getElementById('doorLeft');
+        const doorRight = document.getElementById('doorRight');
+        const overlay = document.getElementById('doorOverlay');
+        
+        if (doorLeft && doorRight) {
+            setTimeout(() => {
+                doorLeft.classList.add('slide-out');
+                doorRight.classList.add('slide-out');
+                setTimeout(() => {
+                    if (overlay) overlay.style.display = 'none';
+                }, 1100);
+            }, 500);
+        } else {
+            if (overlay) overlay.style.display = 'none';
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === "#" || targetId === "") return;
+                const targetElem = document.querySelector(targetId);
+                if (targetElem) {
+                    e.preventDefault();
+                    const yOffset = -70;
+                    const y = targetElem.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                    history.pushState(null, null, targetId);
+                }
+            });
+        });
+        
+        // Handle missing screenshot images - show placeholder if image fails to load
+        document.querySelectorAll('.project-screenshot img').forEach(img => {
+            img.addEventListener('error', function() {
+                this.style.display = 'none';
+                const placeholder = document.createElement('div');
+                placeholder.style.width = '100%';
+                placeholder.style.height = '100%';
+                placeholder.style.display = 'flex';
+                placeholder.style.alignItems = 'center';
+                placeholder.style.justifyContent = 'center';
+                placeholder.style.backgroundColor = 'rgba(30, 50, 25, 0.5)';
+                placeholder.style.color = '#8bbc72';
+                placeholder.style.fontSize = '0.85rem';
+                placeholder.style.gap = '0.5rem';
+                placeholder.innerHTML = '<i class="fas fa-image" style="font-size: 2rem; opacity: 0.7;"></i><span>Screenshot preview</span>';
+                this.parentElement.appendChild(placeholder);
+            });
+        });
+        
+        console.log("Arold Paulo B. Tacumba Portfolio — Sliding door intro complete");
+    });
+</script>
+</body>
+</html>

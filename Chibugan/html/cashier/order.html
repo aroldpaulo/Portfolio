@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHIBUGAN Cashier Operations - Order Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f5f6fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        .card-pos {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .admin-nav {
+            background-color: #212529;
+        }
+
+        .admin-nav .btn {
+            transition: all 0.2s ease;
+        }
+
+        .admin-nav .btn:hover {
+            opacity: 1 !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sticky-nav-offset {
+            top: 66px;
+        }
+
+        .z-index-top {
+            z-index: 1030;
+        }
+
+        footer {
+            background-color: #1e1e2f;
+            color: #ddd;
+        }
+
+        .logout-warning {
+            color: #dc3545;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .logout-warning:hover {
+            color: #b02a37;
+        }
+
+        .status-badge-lg {
+            font-size: 1rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+        }
+
+        .list-group-item {
+            transition: background-color 0.2s;
+        }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Sticky payment summary */
+        .sticky-summary {
+            position: sticky;
+            top: 120px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-nav .btn {
+                font-size: 0.8rem;
+                padding: 0.75rem 0.75rem !important;
+            }
+            
+            .sticky-summary {
+                position: relative;
+                top: auto;
+            }
+        }
+    </style>
+</head>
+<body class="min-vh-100">
+
+    <!-- ========== TOP NAVIGATION BAR ========== -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg sticky-top z-index-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand text-success fs-4 fw-bold" href="#">
+                <i class="bi bi-shop me-2"></i>CHIBUGAN Cashier Panel
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-secondary fw-semibold me-4 d-none d-md-inline">
+                    <i class="bi bi-person-circle me-1"></i> Cashier: Maria
+                </span>
+                <a class="logout-warning text-sm fw-semibold text-decoration-none" href="../../index.html">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== CASHIER NAVIGATION BAR ========== -->
+    <div class="bg-dark shadow-sm sticky-top admin-nav sticky-nav-offset">
+        <div class="container-fluid px-4 d-flex">
+            <!-- Dashboard -->
+            <a href="dashboard.html" class="btn py-3 px-4 rounded-0 fw-bold border-0 text-white">
+                <i class="bi bi-bar-chart-fill me-1"></i> Dashboard
+            </a>
+            
+            <!-- Pending Orders -->
+            <a href="#" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-bell-fill me-1"></i> Pending Orders
+                <span class="badge bg-warning ms-1">7</span>
+            </a>
+            
+            <!-- Completed Orders -->
+            <a href="#" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-check2-circle me-1"></i> Completed Orders
+            </a>
+            
+            <!-- Customer Wallet -->
+            <a href="customer-wallet.html" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-credit-card-fill me-1"></i> Customer Wallet
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="container px-4 mt-4 pb-5">
+        
+        <!-- Header with Back Button -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fs-2 fw-bold text-dark">
+                <i class="bi bi-file-text me-2 text-success"></i> Order Details: ORD-2025-101
+            </h1>
+            <a href="#" class="btn btn-outline-secondary fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Back to Queue
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            
+            <!-- Left Column: Order Info & Items -->
+            <div class="col-lg-8">
+                
+                <!-- Order Status Card -->
+                <div class="card card-pos bg-white p-4 mb-4 border-start border-warning border-5">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h3 class="fs-4 fw-bold mb-2">Order Status</h3>
+                            <span class="badge bg-warning text-dark fw-bold status-badge-lg">Preparing</span>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted d-block">Order Code</small>
+                            <span class="fw-bold fs-5">ORD-2025-101</span>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <p class="mb-0 text-secondary fw-semibold">Customer:</p>
+                            <p class="fs-5 fw-bold">Juan Dela Cruz <small class="text-muted">(ID: CUST1001)</small></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-0 text-secondary fw-semibold">Source / Table:</p>
+                            <p class="fs-5 fw-bold text-info">Online Order (Take-Out)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-0 text-secondary fw-semibold">Time Placed:</p>
+                            <p class="fs-5 fw-bold">2:30 PM (Oct 13, 2025)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-0 text-secondary fw-semibold">Payment Method:</p>
+                            <p class="fs-5 fw-bold">
+                                <span class="badge bg-success">Credit Balance</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Special Notes -->
+                    <div class="mt-3 p-3 bg-light rounded-3">
+                        <p class="mb-0 text-secondary fw-semibold">Special Instructions:</p>
+                        <p class="mb-0 fst-italic">"Extra spicy sauce on the side please. No onions on the adobo."</p>
+                    </div>
+                </div>
+
+                <!-- Itemized List Card -->
+                <div class="card card-pos bg-white p-4">
+                    <h3 class="fs-4 fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-list-check me-2"></i> Itemized List (4 Items)
+                    </h3>
+                    
+                    <ul class="list-group list-group-flush">
+                        <!-- Item 1 -->
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <div class="flex-grow-1">
+                                <span class="badge bg-dark me-2">x 2</span>
+                                <span class="fw-bold fs-5">Chicken Adobo</span>
+                                <div class="mt-1">
+                                    <small class="text-muted">₱75.00 each</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0 text-dark fw-semibold fs-5">₱ 150.00</p>
+                            </div>
+                        </li>
+                        
+                        <!-- Item 2 -->
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <div class="flex-grow-1">
+                                <span class="badge bg-dark me-2">x 1</span>
+                                <span class="fw-bold fs-5">Buko Juice</span>
+                                <div class="mt-1">
+                                    <small class="text-muted">₱35.00 each</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0 text-dark fw-semibold fs-5">₱ 35.00</p>
+                            </div>
+                        </li>
+                        
+                        <!-- Item 3 -->
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <div class="flex-grow-1">
+                                <span class="badge bg-dark me-2">x 1</span>
+                                <span class="fw-bold fs-5">Garlic Rice</span>
+                                <div class="mt-1">
+                                    <small class="text-muted">₱20.00 each</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0 text-dark fw-semibold fs-5">₱ 20.00</p>
+                            </div>
+                        </li>
+                        
+                        <!-- Item 4 -->
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                            <div class="flex-grow-1">
+                                <span class="badge bg-dark me-2">x 1</span>
+                                <span class="fw-bold fs-5">Leche Flan</span>
+                                <div class="mt-1">
+                                    <small class="text-muted">₱45.00 each</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <p class="mb-0 text-dark fw-semibold fs-5">₱ 45.00</p>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <!-- Order Timeline -->
+                    <div class="mt-4 pt-3 border-top">
+                        <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-clock-history me-2"></i> Order Timeline</h5>
+                        <ul class="list-unstyled">
+                            <li class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">2:30 PM - Order placed</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-2">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                <span class="text-muted">2:32 PM - Payment confirmed (Credit Balance)</span>
+                            </li>
+                            <li class="d-flex align-items-center mb-2">
+                                <i class="bi bi-arrow-right-circle-fill text-warning me-2"></i>
+                                <span class="fw-semibold">2:35 PM - Preparing order</span>
+                            </li>
+                            <li class="d-flex align-items-center text-muted">
+                                <i class="bi bi-circle me-2"></i>
+                                <span>Pending: Ready for pickup</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Right Column: Payment Summary -->
+            <div class="col-lg-4">
+                <div class="card card-pos bg-white p-4 sticky-summary">
+                    
+                    <h3 class="fs-4 fw-bold text-success mb-3 border-bottom pb-2">
+                        <i class="bi bi-currency-peso me-2"></i> Payment Summary
+                    </h3>
+                    
+                    <!-- Price Breakdown -->
+                    <div class="space-y-2 py-4 border-top border-bottom mb-4">
+                        <div class="d-flex justify-content-between fw-semibold mb-2">
+                            <span>Subtotal:</span>
+                            <span>₱ 250.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-sm text-secondary mb-2">
+                            <span>VAT (0%):</span>
+                            <span>₱ 0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-sm text-secondary mb-2">
+                            <span>Service Charge:</span>
+                            <span>₱ 0.00</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between fs-3 fw-bold text-danger pt-2 mt-2 border-top">
+                            <span>GRAND TOTAL:</span>
+                            <span>₱ 250.00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Info -->
+                    <div class="p-3 bg-light rounded-3 mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Payment Method:</span>
+                            <span class="fw-bold text-success">Credit Balance</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">Amount Paid:</span>
+                            <span class="fw-bold">₱ 250.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-secondary">Balance Remaining:</span>
+                            <span class="fw-bold text-muted">₱ 0.00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success fw-bold py-2" onclick="alert('Order marked as ready!')">
+                            <i class="bi bi-check-circle-fill me-2"></i> Mark as Ready
+                        </button>
+                        <button class="btn btn-outline-primary fw-bold py-2" onclick="window.print()">
+                            <i class="bi bi-printer-fill me-2"></i> Print Receipt
+                        </button>
+                        <button class="btn btn-outline-danger fw-bold py-2" onclick="if(confirm('Cancel this order?')) alert('Order cancelled.')">
+                            <i class="bi bi-x-circle-fill me-2"></i> Cancel Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-3 mt-5">
+        <div class="container-fluid px-4 text-center">
+            <small>&copy; 2025 CHIBUGAN POS System. Static Mockup.</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

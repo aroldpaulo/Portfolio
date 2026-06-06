@@ -1,0 +1,641 @@
+<?php
+// Check if session is already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in and is cashier or admin
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['cashier', 'admin'])) {
+    header('Location: ../index.php');
+    exit();
+}
+
+// Database connection
+require_once '../config/database.php';
+
+// Get cashier data for profile
+try {
+    $stmt = $pdo->prepare("SELECT full_name, email, profile_picture, role FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $cashier_data = $stmt->fetch();
+    
+    if ($cashier_data) {
+        $_SESSION['full_name'] = $cashier_data['full_name'];
+        $_SESSION['email'] = $cashier_data['email'];
+        $_SESSION['profile_picture'] = $cashier_data['profile_picture'];
+    }
+    
+    // Get filter parameters
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+    $date_filter = isset($_GET['date']) ? trim($_GET['date']) : '';
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $limit = 10;
+    $offset = ($page - 1) * $limit;
+    
+    // Build query for completed orders
+    $sql = "
+        SELECT o.*, u.full_name as customer_name, u.email as customer_email 
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        WHERE o.status = 'Completed'
+    ";
+    $count_sql = "SELECT COUNT(*) as total FROM orders o WHERE o.status = 'Completed'";
+    $params = [];
+    
+    if (!empty($search)) {
+        $sql .= " AND (o.order_code LIKE ? OR u.full_name LIKE ?)";
+        $count_sql .= " AND (order_code LIKE ? OR user_id IN (SELECT id FROM users WHERE full_name LIKE ?))";
+        $search_param = "%$search%";
+        $params[] = $search_param;
+        $params[] = $search_param;
+    }
+    
+    if (!empty($date_filter)) {
+        $sql .= " AND DATE(o.created_at) = ?";
+        $count_sql .= " AND DATE(created_at) = ?";
+        $params[] = $date_filter;
+    }
+    
+    $sql .= " ORDER BY o.created_at DESC LIMIT ? OFFSET ?";
+    
+    // Get total count
+    $stmt = $pdo->prepare($count_sql);
+    $stmt->execute($params);
+    $total_orders = $stmt->fetchColumn();
+    $total_pages = ceil($total_orders / $limit);
+    
+    // Get completed orders with pagination
+    $params[] = $limit;
+    $params[] = $offset;
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $completed_orders = $stmt->fetchAll();
+    
+} catch(PDOException $e) {
+    $completed_orders = [];
+    $total_orders = 0;
+    $total_pages = 0;
+    error_log("Database error in completed orders: " . $e->getMessage());
+}
+
+$cashier_name = $_SESSION['full_name'] ?? 'Cashier';
+$cashier_email = $_SESSION['email'] ?? '';
+$profile_picture = $_SESSION['profile_picture'] ?? null;
+$user_role = $_SESSION['role'] ?? 'cashier';
+
+// Prepare avatar HTML for navbar and dropdown
+$nav_avatar_html = '';
+$dropdown_avatar_html = '';
+
+if ($profile_picture && file_exists('../' . $profile_picture)) {
+    $nav_avatar_html = '<img src="../' . $profile_picture . '" class="nav-avatar-img" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">';
+    $dropdown_avatar_html = '<img src="../' . $profile_picture . '" class="dropdown-avatar-img" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover;">';
+} else {
+    $nav_avatar_html = '<div class="nav-avatar">' . strtoupper(substr($cashier_name, 0, 1)) . '</div>';
+    $dropdown_avatar_html = '<div class="dropdown-avatar">' . strtoupper(substr($cashier_name, 0, 1)) . '</div>';
+}
+
+// Get order items for details modal
+$order_items = [];
+foreach ($completed_orders as $order) {
+    $stmt = $pdo->prepare("SELECT item_name, quantity, unit_price, subtotal FROM order_items WHERE order_id = ?");
+    $stmt->execute([$order['id']]);
+    $order_items[$order['id']] = $stmt->fetchAll();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHIBUGAN Cashier Operations - Completed Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f5f6fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        .card-pos {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .table-pos th {
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+
+        .table-pos tbody tr {
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .table-pos tbody tr:hover {
+            background-color: #f0fdf4;
+        }
+
+        .admin-nav {
+            background-color: #212529;
+        }
+
+        .admin-nav .btn {
+            transition: all 0.2s ease;
+        }
+
+        .admin-nav .btn:hover {
+            opacity: 1 !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sticky-nav-offset {
+            top: 56px;
+        }
+
+        .z-index-top {
+            z-index: 1030;
+        }
+
+        footer {
+            background-color: #1e1e2f;
+            color: #ddd;
+        }
+
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .page-link {
+            color: #198754;
+        }
+
+        .page-item.active .page-link {
+            background-color: #198754;
+            border-color: #198754;
+        }
+        
+        .profile-dropdown {
+            padding: 0;
+            min-width: 280px;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 10px;
+        }
+        
+        .dropdown-profile-header {
+            background: linear-gradient(135deg, #198754, #0d6efd);
+            padding: 20px;
+            border-radius: 16px 16px 0 0;
+            text-align: center;
+            color: white;
+        }
+        
+        .dropdown-avatar {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 2rem;
+            font-weight: bold;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        .dropdown-avatar-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        
+        .dropdown-name {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: white !important;
+        }
+        
+        .dropdown-email {
+            font-size: 0.75rem;
+            opacity: 0.85;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+        .dropdown-divider-custom {
+            margin: 8px 0;
+            border-color: #eee;
+        }
+        
+        .dropdown-item-custom {
+            padding: 10px 20px;
+            transition: all 0.2s;
+            color: #1a1a2e !important;
+        }
+        
+        .dropdown-item-custom:hover {
+            background-color: #f8f9fa;
+            padding-left: 28px;
+        }
+        
+        .dropdown-item-custom i {
+            width: 24px;
+            margin-right: 10px;
+            color: #198754;
+        }
+        
+        .dropdown-item-custom.text-danger i {
+            color: #dc3545;
+        }
+        
+        .dropdown-footer {
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            border-radius: 0 0 16px 16px;
+            font-size: 0.7rem;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .nav-link-profile {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .nav-avatar-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 300px;
+        }
+        
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .spinner-overlay.show {
+            display: flex;
+        }
+
+        @media (max-width: 768px) {
+            .admin-nav .btn {
+                font-size: 0.8rem;
+                padding: 0.75rem 0.75rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="spinner-overlay" id="spinnerOverlay">
+    <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<div class="toast-notification"></div>
+
+<!-- ========== TOP NAVIGATION BAR ========== -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg sticky-top z-index-top">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand text-success fs-4 fw-bold" href="cashier_panel.php">
+            <i class="bi bi-shop me-2"></i>CHIBUGAN Cashier Panel
+        </a>
+        <div class="d-flex align-items-center">
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle nav-link-profile d-flex align-items-center" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <?php echo $nav_avatar_html; ?>
+                    <span class="ms-2 fw-semibold text-dark"><?php echo htmlspecialchars($cashier_name); ?></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end profile-dropdown">
+                    <li>
+                        <div class="dropdown-profile-header">
+                            <?php echo $dropdown_avatar_html; ?>
+                            <div class="dropdown-name"><?php echo htmlspecialchars($cashier_name); ?></div>
+                            <div class="dropdown-email"><?php echo htmlspecialchars($cashier_email); ?></div>
+                        </div>
+                    </li>
+                    <li><a class="dropdown-item dropdown-item-custom" href="profile.php"><i class="bi bi-person-circle"></i> My Profile</a></li>
+                    <li><a class="dropdown-item dropdown-item-custom" href="settings.php"><i class="bi bi-gear"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider-custom"></li>
+                    <li><a class="dropdown-item dropdown-item-custom text-danger" href="../api/logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    <li><div class="dropdown-footer"><i class="bi bi-shield-check"></i> Secure Connection</div></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== CASHIER NAVIGATION BAR ========== -->
+<div class="bg-dark shadow-sm sticky-top admin-nav sticky-nav-offset">
+    <div class="container-fluid px-4 d-flex overflow-x-auto">
+        <?php if ($user_role == 'admin'): ?>
+        <a href="dashboard.php" class="btn btn-danger py-3 px-4 rounded-0 fw-bolder border-0 text-white">
+            <i class="bi bi-gear-fill me-1"></i> Admin Panel
+        </a>
+        <?php endif; ?>
+        
+        <a href="cashier_panel.php" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+            <i class="bi bi-bar-chart-fill me-1"></i> Dashboard
+        </a>
+        
+        <a href="pending_orders.php" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+            <i class="bi bi-bell-fill me-1"></i> Pending Orders
+        </a>
+        
+        <a href="completed_orders.php" class="btn btn-success py-3 px-4 rounded-0 fw-bold border-0">
+            <i class="bi bi-check2-circle me-1"></i> Completed Orders
+        </a>
+        
+        <a href="customer_wallet.php" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+            <i class="bi bi-credit-card-fill me-1"></i> Customer Wallet
+        </a>
+        
+        <a href="settings.php" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+            <i class="bi bi-gear-wide-connected me-1"></i> Settings
+        </a>
+    </div>
+</div>
+
+<!-- ========== MAIN CONTENT ========== -->
+<div class="container-fluid px-4 mt-4 pb-5">
+    <h1 class="fs-2 fw-bold text-dark mb-4">
+        <i class="bi bi-check2-circle me-2 text-success"></i> Completed Transactions Log
+    </h1>
+    <p class="text-secondary mb-4">A record of all successfully served and completed orders.</p>
+
+    <!-- Search & Filter Form -->
+    <form method="GET" action="" class="row g-3 mb-4" id="filterForm">
+        <div class="col-md-5">
+            <input type="text" name="search" class="form-control" id="searchInput" 
+                   placeholder="Search by Order ID or Customer Name" value="<?php echo htmlspecialchars($search); ?>">
+        </div>
+        <div class="col-md-5">
+            <input type="date" name="date" class="form-control" id="dateInput" value="<?php echo htmlspecialchars($date_filter); ?>">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-dark w-100 fw-semibold">
+                <i class="bi bi-funnel"></i> Apply Filters
+            </button>
+        </div>
+    </form>
+
+    <?php if (!empty($search) || !empty($date_filter)): ?>
+    <div class="alert alert-info mb-3">
+        <i class="bi bi-info-circle me-2"></i>
+        Showing filtered results. 
+        <a href="completed_orders.php" class="alert-link">Clear filters</a>
+    </div>
+    <?php endif; ?>
+
+    <div class="card card-pos bg-white p-4">
+        <h3 class="fs-5 fw-bold text-success mb-3">
+            Completed Orders (<?php echo $total_orders; ?> Records)
+        </h3>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle table-pos" id="ordersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Time Completed</th>
+                        <th>Customer</th>
+                        <th>Order Type</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($completed_orders)): ?>
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-1"></i>
+                                <p class="mt-2">No completed orders found.</p>
+                            </td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach ($completed_orders as $order): ?>
+                        <tr data-order-id="<?php echo $order['id']; ?>" data-order-code="<?php echo htmlspecialchars($order['order_code']); ?>">
+                            <td class="fw-bold"><?php echo htmlspecialchars($order['order_code']); ?></td>
+                            <td><?php echo date('g:i A', strtotime($order['updated_at'] ?? $order['created_at'])); ?></td>
+                            <td><?php echo htmlspecialchars($order['customer_name']); ?></td>
+                            <td>
+                                <span class="badge <?php echo $order['order_type'] == 'Take-Out' ? 'bg-secondary' : 'bg-info text-dark'; ?> p-2 fw-semibold">
+                                    <?php echo $order['order_type']; ?>
+                                </span>
+                            </td>
+                            <td class="fw-bold text-success">₱ <?php echo number_format($order['total_amount'], 2); ?></td>
+                            <td><span class="badge bg-success fw-semibold p-2">Completed</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-order-id="<?php echo $order['id']; ?>" data-bs-toggle="modal" data-bs-target="#orderDetailsModal">
+                                    <i class="bi bi-eye"></i> View Details
+                                </button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        
+        <?php if ($total_pages > 1): ?>
+        <div class="d-flex justify-content-between align-items-center pt-3">
+            <small class="text-muted">
+                Showing <?php echo $offset + 1; ?> to <?php echo min($offset + $limit, $total_orders); ?> of <?php echo $total_orders; ?> completed orders.
+            </small>
+            <nav>
+                <ul class="pagination mb-0">
+                    <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&date=<?php echo urlencode($date_filter); ?>">Previous</a>
+                    </li>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                    <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&date=<?php echo urlencode($date_filter); ?>"><?php echo $i; ?></a>
+                    </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&date=<?php echo urlencode($date_filter); ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <?php endif; ?>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-receipt me-2"></i> Order Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="orderDetailsContent">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="py-3 mt-5">
+    <div class="container-fluid px-4 text-center">
+        <small>&copy; 2025 CHIBUGAN POS System.</small>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function showToast(message, type = 'success') {
+        const container = document.querySelector('.toast-notification');
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show shadow`;
+        toast.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+    
+    function showSpinner(show) {
+        const spinner = document.getElementById('spinnerOverlay');
+        if (show) {
+            spinner.classList.add('show');
+        } else {
+            spinner.classList.remove('show');
+        }
+    }
+    
+    // View order details
+    document.querySelectorAll('.view-details-btn').forEach(button => {
+        button.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            const orderId = this.getAttribute('data-order-id');
+            
+            showSpinner(true);
+            
+            try {
+                const response = await fetch(`../api/get_order_details.php?order_id=${orderId}`);
+                const data = await response.json();
+                showSpinner(false);
+                
+                if (data.success) {
+                    const order = data.order;
+                    const items = data.items;
+                    
+                    let itemsHtml = '';
+                    items.forEach(item => {
+                        itemsHtml += `
+                            <tr>
+                                <td>${item.quantity}x</td>
+                                <td>${escapeHtml(item.item_name)}</td>
+                                <td class="text-end">₱ ${parseFloat(item.unit_price).toFixed(2)}</td>
+                                <td class="text-end">₱ ${parseFloat(item.subtotal).toFixed(2)}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    document.getElementById('orderDetailsContent').innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Order Code:</strong> ${escapeHtml(order.order_code)}</p>
+                                <p><strong>Customer:</strong> ${escapeHtml(order.customer_name)}</p>
+                                <p><strong>Order Type:</strong> ${escapeHtml(order.order_type)}</p>
+                                <p><strong>Status:</strong> <span class="badge bg-success">${escapeHtml(order.status)}</span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
+                                <p><strong>Payment Method:</strong> ${escapeHtml(order.payment_method || 'Credit')}</p>
+                                <p><strong>Payment Status:</strong> <span class="badge bg-${order.payment_status === 'paid' ? 'success' : 'warning'}">${escapeHtml(order.payment_status)}</span></p>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6 class="fw-bold">Order Items:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr><th>Qty</th><th>Item</th><th class="text-end">Unit Price</th><th class="text-end">Subtotal</th></tr>
+                                </thead>
+                                <tbody>
+                                    ${itemsHtml}
+                                </tbody>
+                                <tfoot>
+                                    <tr><td colspan="3" class="text-end fw-bold">Total:</td>
+                                    <td class="text-end fw-bold text-success">₱ ${parseFloat(order.total_amount).toFixed(2)}</td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('orderDetailsContent').innerHTML = `
+                        <div class="alert alert-danger">${escapeHtml(data.message)}</div>
+                    `;
+                }
+            } catch (error) {
+                showSpinner(false);
+                document.getElementById('orderDetailsContent').innerHTML = `
+                    <div class="alert alert-danger">Error loading order details: ${escapeHtml(error.message)}</div>
+                `;
+            }
+        });
+    });
+    
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+
+</body>
+</html>

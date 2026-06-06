@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SparkBank PC Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e9f0f5 0%, #d9e2ec 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* PC-first layout: wider, cleaner, desktop-friendly */
+        .gcash-dashboard {
+            max-width: 1300px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* header region - like gcash web */
+        .dashboard-header {
+            background: #0b2b3b;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-area h1 {
+            color: white;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .logo-area p {
+            color: #9bb7d0;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .balance-panel {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(4px);
+            padding: 0.6rem 1.5rem;
+            border-radius: 2rem;
+            text-align: right;
+        }
+
+        .balance-label {
+            color: #bdd4e5;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .balance-amount {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .currency-sign {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        #balanceNumber {
+            transition: transform 0.2s cubic-bezier(0.2, 1.2, 0.8, 1);
+            display: inline-block;
+        }
+
+        /* two column layout : left actions / right history (desktop layout) */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+            padding: 2rem;
+            background: #fbfdff;
+        }
+
+        /* left card - transactions actions */
+        .action-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
+            border: 1px solid #eef2f8;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e2f3e;
+            margin-bottom: 1.2rem;
+            border-left: 3px solid #007c6e;
+            padding-left: 0.8rem;
+        }
+
+        .amount-input-group {
+            background: #f3f7fc;
+            border-radius: 1.2rem;
+            display: flex;
+            align-items: center;
+            border: 1px solid #e2eaf2;
+            transition: all 0.2s;
+            margin-bottom: 1.2rem;
+            padding: 0.2rem 0.2rem 0.2rem 1rem;
+        }
+
+        .amount-input-group:focus-within {
+            border-color: #007c6e;
+            box-shadow: 0 0 0 3px rgba(0, 124, 110, 0.15);
+            background: white;
+        }
+
+        .currency-prefix {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: #2c4c6c;
+        }
+
+        #amountInput {
+            flex: 1;
+            padding: 0.9rem 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-family: monospace;
+        }
+
+        .quick-row {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-chip {
+            background: #ecf3f9;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1f5068;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+            flex: 1;
+            border: none;
+        }
+
+        .quick-chip:hover {
+            background: #dee9f2;
+            transform: translateY(-1px);
+        }
+
+        .quick-chip:active {
+            transform: scale(0.96);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: #007c6e;
+            color: white;
+            border: none;
+            padding: 0.9rem 0;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #006257;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 124, 110, 0.25);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #e85248;
+            color: white;
+            border: none;
+            padding: 0.9rem 0;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #d33a2f;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(232, 82, 72, 0.25);
+        }
+
+        .btn-primary:active, .btn-secondary:active {
+            transform: scale(0.97);
+        }
+
+        /* history panel - desktop card */
+        .history-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #eef2f8;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+
+        .history-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #1e2f3e;
+            border-left: 3px solid #007c6e;
+            padding-left: 0.8rem;
+        }
+
+        .badge-live {
+            background: #eef3fc;
+            padding: 0.2rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #007c6e;
+        }
+
+        .transaction-list {
+            flex: 1;
+            max-height: 420px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* transaction item with GCash desktop elegance */
+        .tx-row {
+            background: #fefefe;
+            border-radius: 1rem;
+            padding: 0.9rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid;
+            transition: all 0.2s;
+            animation: fadeSlide 0.3s ease-out;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+            border-bottom: 1px solid #f0f4fa;
+        }
+
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tx-info .tx-category {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #1a3a4e;
+        }
+
+        .tx-date {
+            font-size: 0.7rem;
+            color: #8aa1b9;
+            margin-top: 4px;
+        }
+
+        .tx-money {
+            font-weight: 800;
+            font-size: 1.15rem;
+        }
+
+        .deposit-style {
+            border-left-color: #007c6e;
+        }
+        .deposit-style .tx-money {
+            color: #007c6e;
+        }
+        .withdraw-style {
+            border-left-color: #e85248;
+        }
+        .withdraw-style .tx-money {
+            color: #e85248;
+        }
+
+        .empty-transactions {
+            text-align: center;
+            padding: 2.5rem;
+            color: #90a4bc;
+            font-size: 0.85rem;
+            background: #fafcff;
+            border-radius: 1rem;
+        }
+
+        /* toast notification (desktop style) */
+        .toast-message {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) scale(0.96);
+            background: #1a2a38f2;
+            backdrop-filter: blur(12px);
+            color: white;
+            padding: 0.7rem 1.6rem;
+            border-radius: 3rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            pointer-events: none;
+            z-index: 1000;
+            font-family: monospace;
+            letter-spacing: 0.3px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .toast-message.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* scrollbar */
+        .transaction-list::-webkit-scrollbar {
+            width: 5px;
+        }
+        .transaction-list::-webkit-scrollbar-track {
+            background: #eef2f8;
+            border-radius: 10px;
+        }
+        .transaction-list::-webkit-scrollbar-thumb {
+            background: #cbdae8;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 860px) {
+            body {
+                padding: 1rem;
+            }
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+            .balance-amount {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="gcash-dashboard">
+    <!-- header section : pc friendly -->
+    <div class="dashboard-header">
+        <div class="logo-area">
+            <h1>SparkBank</h1>
+            <p>Secure digital wallet</p>
+        </div>
+        <div class="balance-panel">
+            <div class="balance-label">TOTAL BALANCE</div>
+            <div class="balance-amount">
+                <span class="currency-sign">PHP</span>
+                <span id="balanceNumber">1,250.00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- main two-column desktop layout -->
+    <div class="main-grid">
+        <!-- left: action panel -->
+        <div class="action-card">
+            <div class="section-title">Transaction</div>
+            <div class="amount-input-group">
+                <span class="currency-prefix">₱</span>
+                <input type="number" id="amountInput" placeholder="0.00" value="150" step="any">
+            </div>
+            <div class="quick-row">
+                <button class="quick-chip" data-value="100">PHP 100</button>
+                <button class="quick-chip" data-value="500">PHP 500</button>
+                <button class="quick-chip" data-value="1000">PHP 1,000</button>
+                <button class="quick-chip" data-value="2500">PHP 2,500</button>
+            </div>
+            <div class="button-group">
+                <button class="btn-primary" id="depositButton">Deposit</button>
+                <button class="btn-secondary" id="withdrawButton">Withdraw</button>
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.7rem; color: #8aa1b9; text-align: center;">
+                Secure transactions • real-time balance
+            </div>
+        </div>
+
+        <!-- right: transaction history with GCash dashboard feel -->
+        <div class="history-card">
+            <div class="history-header">
+                <div class="history-title">Recent Activity</div>
+                <div class="badge-live">live updates</div>
+            </div>
+            <div class="transaction-list" id="transactionList">
+                <div class="empty-transactions">No transactions yet. Deposit or withdraw funds.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="globalToast" class="toast-message">SparkBank ready</div>
+
+<script>
+    // ======================== BANK STATE (FULLY FUNCTIONAL) ========================
+    let currentBalance = 1250.00;   // realistic starting balance
+    let transactions = [];           // store { id, type, amount, date, displayAmount }
+
+    // DOM references
+    const balanceSpan = document.getElementById('balanceNumber');
+    const amountInput = document.getElementById('amountInput');
+    const depositBtn = document.getElementById('depositButton');
+    const withdrawBtn = document.getElementById('withdrawButton');
+    const transactionContainer = document.getElementById('transactionList');
+    const toastEl = document.getElementById('globalToast');
+
+    // Helper: update balance UI with subtle bouncy animation (desktop friendly)
+    function updateBalanceUI(newBalance) {
+        const formatted = newBalance.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        balanceSpan.style.transform = 'scale(1.08)';
+        setTimeout(() => {
+            balanceSpan.style.transform = 'scale(1)';
+        }, 130);
+        balanceSpan.innerText = formatted;
+    }
+
+    // Toast message (clean, no emoji, gcash-like)
+    function showNotification(message, isError = false) {
+        toastEl.innerText = message;
+        toastEl.classList.add('show');
+        if (isError) {
+            toastEl.style.backgroundColor = '#c53a2ee6';
+        } else {
+            toastEl.style.backgroundColor = '#1a2a38f2';
+        }
+        setTimeout(() => {
+            toastEl.classList.remove('show');
+            setTimeout(() => {
+                toastEl.style.backgroundColor = '#1a2a38f2';
+            }, 200);
+        }, 2400);
+    }
+
+    // get sanitized amount from input
+    function getAmount() {
+        let raw = amountInput.value.trim();
+        if (raw === '') return 0;
+        let num = parseFloat(raw);
+        if (isNaN(num) || num < 0) return 0;
+        return Math.round(num * 100) / 100;
+    }
+
+    // format timestamp: "Apr 7, 3:45 PM" (no emoji)
+    function getCurrentTimestamp() {
+        const now = new Date();
+        return now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+    }
+
+    // add transaction to history (no emojis inside records)
+    function addTransactionToHistory(type, amountValue) {
+        const timestamp = getCurrentTimestamp();
+        const isDeposit = (type === 'deposit');
+        const sign = isDeposit ? '+' : '-';
+        const formattedAmount = `${sign} PHP ${amountValue.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        
+        const newTx = {
+            id: Date.now() + Math.random(),
+            type: type,
+            amount: amountValue,
+            date: timestamp,
+            display: formattedAmount,
+        };
+        transactions.unshift(newTx);
+        // keep last 16 records for performance
+        if (transactions.length > 16) transactions.pop();
+        renderTransactionHistory();
+    }
+
+    // render transaction list with smooth animation (no emoji, clean)
+    function renderTransactionHistory() {
+        if (!transactionContainer) return;
+        
+        if (transactions.length === 0) {
+            transactionContainer.innerHTML = `<div class="empty-transactions">No transactions yet. Deposit or withdraw funds.</div>`;
+            return;
+        }
+        
+        let html = '';
+        for (let tx of transactions) {
+            const isDeposit = (tx.type === 'deposit');
+            const rowClass = isDeposit ? 'deposit-style' : 'withdraw-style';
+            const actionLabel = isDeposit ? 'Deposit' : 'Withdraw';
+            const amountRaw = tx.amount.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const amountSymbol = isDeposit ? `+ PHP ${amountRaw}` : `- PHP ${amountRaw}`;
+            
+            html += `
+                <div class="tx-row ${rowClass}">
+                    <div class="tx-info">
+                        <div class="tx-category">${actionLabel}</div>
+                        <div class="tx-date">${tx.date}</div>
+                    </div>
+                    <div class="tx-money">${amountSymbol}</div>
+                </div>
+            `;
+        }
+        transactionContainer.innerHTML = html;
+    }
+
+    // ========== CORE BANKING METHODS ==========
+    function depositFunds() {
+        let amount = getAmount();
+        if (amount <= 0) {
+            showNotification("Invalid amount. Enter a positive value.", true);
+            // input shake effect
+            const inputGroup = document.querySelector('.amount-input-group');
+            inputGroup.style.transform = 'translateX(3px)';
+            setTimeout(() => inputGroup.style.transform = '', 150);
+            return;
+        }
+        
+        // perform deposit
+        currentBalance += amount;
+        currentBalance = Math.round(currentBalance * 100) / 100;
+        updateBalanceUI(currentBalance);
+        
+        // record transaction
+        addTransactionToHistory('deposit', amount);
+        
+        // notification: no emoji, plain professional
+        showNotification(`Deposit successful. + PHP ${amount.toLocaleString()} · New balance PHP ${currentBalance.toLocaleString()}`);
+        
+        // reset input field & focus for better UX
+        amountInput.value = '';
+        amountInput.focus();
+        
+        // extra subtle animation on balance card
+        const balancePanel = document.querySelector('.balance-panel');
+        balancePanel.style.transform = 'scale(1.01)';
+        setTimeout(() => balancePanel.style.transform = '', 180);
+    }
+    
+    function withdrawFunds() {
+        let amount = getAmount();
+        if (amount <= 0) {
+            showNotification("Invalid withdrawal amount.", true);
+            const inputGroup = document.querySelector('.amount-input-group');
+            inputGroup.style.transform = 'translateX(3px)';
+            setTimeout(() => inputGroup.style.transform = '', 150);
+            return;
+        }
+        
+        if (amount > currentBalance) {
+            showNotification(`Insufficient balance. Available: PHP ${currentBalance.toLocaleString()}`, true);
+            // error micro animation on balance
+            const balDiv = document.getElementById('balanceNumber');
+            balDiv.style.transform = 'translateX(3px)';
+            setTimeout(() => balDiv.style.transform = '', 200);
+            return;
+        }
+        
+        // perform withdraw
+        currentBalance -= amount;
+        currentBalance = Math.round(currentBalance * 100) / 100;
+        updateBalanceUI(currentBalance);
+        
+        addTransactionToHistory('withdraw', amount);
+        showNotification(`Withdrawal successful. - PHP ${amount.toLocaleString()} · Remaining PHP ${currentBalance.toLocaleString()}`);
+        
+        amountInput.value = '';
+        amountInput.focus();
+        
+        const balancePanel = document.querySelector('.balance-panel');
+        balancePanel.style.transform = 'scale(0.99)';
+        setTimeout(() => balancePanel.style.transform = '', 180);
+    }
+    
+    // quick amount chips (GCash desktop style)
+    function initQuickChips() {
+        const chips = document.querySelectorAll('.quick-chip');
+        chips.forEach(chip => {
+            chip.addEventListener('click', (e) => {
+                const val = chip.getAttribute('data-value');
+                let amountVal = parseFloat(val);
+                if (!isNaN(amountVal) && amountVal > 0) {
+                    amountInput.value = amountVal;
+                    chip.style.transform = 'scale(0.94)';
+                    setTimeout(() => chip.style.transform = '', 100);
+                    // subtle field highlight
+                    amountInput.style.backgroundColor = '#eafaf7';
+                    setTimeout(() => amountInput.style.backgroundColor = '', 180);
+                }
+            });
+        });
+    }
+    
+    // prevent negative input
+    function sanitizeNumberInput() {
+        amountInput.addEventListener('input', function() {
+            if (this.value.startsWith('-')) this.value = '';
+            let val = parseFloat(this.value);
+            if (val < 0) this.value = '';
+        });
+        // enter key triggers a toast to remind action
+        amountInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                showNotification("Click Deposit or Withdraw to continue", false);
+            }
+        });
+    }
+    
+    // seed demo transactions (to mimic gcash dashboard but accurate)
+    function seedDemoData() {
+        // initial balance = 1250, we populate 3 sample transactions without emoji, real style
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+        const olderStr = twoDaysAgo.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+        
+        transactions = [
+            {
+                id: 1001,
+                type: 'deposit',
+                amount: 500,
+                date: olderStr,
+                display: '+ PHP 500.00'
+            },
+            {
+                id: 1002,
+                type: 'deposit',
+                amount: 750,
+                date: yesterdayStr,
+                display: '+ PHP 750.00'
+            }
+        ];
+        // add a small welcome transaction so total sum matches 1250. But currentBalance = 1250 already perfect
+        // additionally to make UI rich, add one more small withdrawal for demo activity
+        const today = getCurrentTimestamp();
+        transactions.unshift({
+            id: 1003,
+            type: 'withdraw',
+            amount: 120,
+            date: today,
+            display: '- PHP 120.00'
+        });
+        // reorder so newest first: we keep order correct: unshift puts withdrawal on top.
+        transactions.sort((a,b) => b.id - a.id);
+        // final balance remains 1250 (500+750-120 = 1130? wait recalc: 500+750 =1250, minus 120 = 1130, but we want balance=1250,
+        // to keep everything consistent, we adjust demo transactions to match actual balance:
+        // we set balance to 1250, and demo transactions show deposits/withdraw without affecting real balance.
+        // But we don't want confusing users. So we set 2 deposits + one withdrawal net = 1130, but real balance is 1250 -> mismatch. 
+        // Let's fix: use proper transaction seeding that matches exact currentBalance.
+        // reset transactions to match balance 1250 exactly: two deposits (500 + 750 =1250) no withdrawal in seed, so history pure.
+        transactions = [
+            {
+                id: 2001,
+                type: 'deposit',
+                amount: 500,
+                date: olderStr,
+                display: '+ PHP 500.00'
+            },
+            {
+                id: 2002,
+                type: 'deposit',
+                amount: 750,
+                date: yesterdayStr,
+                display: '+ PHP 750.00'
+            }
+        ];
+        // now currentBalance = 1250 match perfectly.
+        currentBalance = 1250.00;
+        updateBalanceUI(currentBalance);
+        renderTransactionHistory();
+    }
+    
+    // extra: button ripple / hover for desktop
+    function enhanceButtons() {
+        const btns = [depositBtn, withdrawBtn];
+        btns.forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.97)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = '';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = '';
+            });
+        });
+    }
+    
+    // initial entry animation (pc)
+    function entrancePcEffect() {
+        const dashboard = document.querySelector('.gcash-dashboard');
+        dashboard.style.opacity = '0';
+        dashboard.style.transform = 'translateY(8px)';
+        setTimeout(() => {
+            dashboard.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+            dashboard.style.opacity = '1';
+            dashboard.style.transform = 'translateY(0)';
+        }, 40);
+        // slight balance pulse
+        setTimeout(() => {
+            balanceSpan.style.transform = 'scale(1.05)';
+            setTimeout(() => balanceSpan.style.transform = '', 200);
+        }, 200);
+    }
+    
+    // initial call to make bank fully functional
+    function initBank() {
+        seedDemoData();           // sets balance 1250 + two deposit samples
+        initQuickChips();
+        sanitizeNumberInput();
+        enhanceButtons();
+        entrancePcEffect();
+        
+        // attach main event listeners
+        depositBtn.addEventListener('click', depositFunds);
+        withdrawBtn.addEventListener('click', withdrawFunds);
+        
+        // small welcome message
+        setTimeout(() => {
+            showNotification("SparkBank ready ·  style dashboard", false);
+        }, 400);
+    }
+    
+    // start everything
+    initBank();
+</script>
+</body>
+</html>

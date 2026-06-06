@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account | CHIBUGAN Cashier</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f5f6fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        .section-title {
+            color: #198754;
+        }
+
+        .profile-pic-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #198754;
+        }
+
+        .profile-icon-lg {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            border: 3px solid #6c757d;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            color: #6c757d;
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 0.5rem;
+            color: #495057;
+            margin-bottom: 0.5rem;
+            padding: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .nav-pills .nav-link.active,
+        .nav-pills .nav-link:hover {
+            background-color: #198754 !important;
+            color: white !important;
+        }
+
+        .nav-pills .nav-link:not(.active) {
+            background-color: #f8f9fa;
+        }
+
+        .card-pos {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .admin-nav {
+            background-color: #212529;
+        }
+
+        .admin-nav .btn {
+            transition: all 0.2s ease;
+        }
+
+        .admin-nav .btn:hover {
+            opacity: 1 !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .z-index-top {
+            z-index: 1030;
+        }
+
+        footer {
+            background-color: #1e1e2f;
+            color: #ddd;
+        }
+
+        .password-toggle-btn {
+            cursor: pointer;
+            color: #198754;
+            transition: color 0.2s;
+        }
+
+        .password-toggle-btn:hover {
+            color: #157347;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .admin-nav .btn {
+                font-size: 0.8rem;
+                padding: 0.75rem 0.75rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-vh-100 bg-light">
+
+    <!-- ========== TOP NAVIGATION BAR ========== -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg sticky-top z-index-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand text-success fs-4 fw-bold" href="#">
+                <i class="bi bi-shop me-2"></i>CHIBUGAN Cashier Panel
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-secondary fw-semibold me-4 d-none d-md-inline">
+                    <i class="bi bi-person-circle me-1"></i> Cashier: Maria
+                </span>
+                <a href="../welcome.html" class="text-danger fw-semibold text-decoration-none">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== CASHIER NAVIGATION BAR ========== -->
+    <div class="bg-dark shadow-sm sticky-top admin-nav" style="top: 56px;">
+        <div class="container-fluid px-4 d-flex overflow-x-auto">
+            <!-- Admin Panel link -->
+            <a href="#" class="btn btn-danger py-3 px-4 rounded-0 fw-bolder border-0 text-white">
+                <i class="bi bi-gear-fill me-1"></i> Admin Panel
+            </a>
+            
+            <!-- Dashboard -->
+            <a href="#" class="btn py-3 px-4 rounded-0 fw-bold border-0 text-white" style="background-color: #198754;">
+                <i class="bi bi-bar-chart-fill me-1"></i> Dashboard
+            </a>
+            
+            <!-- Pending Orders -->
+            <a href="pending-orders.html" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-bell-fill me-1"></i> Pending Orders
+                <span class="badge bg-warning ms-1">2</span>
+            </a>
+            
+            <!-- Completed Orders -->
+            <a href="completed-orders.html" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-check2-circle me-1"></i> Completed Orders
+            </a>
+            
+            <!-- Customer Wallet -->
+            <a href="customer-wallet.html" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-credit-card-fill me-1"></i> Customer Wallet
+            </a>
+            
+            <!-- Settings (Active) -->
+            <a href="#" class="btn text-white py-3 px-4 rounded-0 fw-semibold active-nav opacity-100" 
+               style="border-bottom: 3px solid #198754;">
+                <i class="bi bi-gear-wide-connected me-1"></i> Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="container mt-5 py-4">
+        <h1 class="text-center section-title pb-2">Cashier Account Settings</h1>
+        <p class="lead text-center text-muted mb-3">Manage your profile, login credentials, and operational settings.</p>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                <!-- Success/Error Messages (hidden by default) -->
+                <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="successAlert">
+                    <strong>Success!</strong> <span id="successMessage">Profile updated successfully!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="alert alert-danger alert-dismissible fade show d-none" role="alert" id="errorAlert">
+                    <strong>Error!</strong> <span id="errorMessage">Please check the form for errors.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <!-- TABBED INTERFACE STRUCTURE -->
+                <div class="row">
+                    
+                    <!-- LEFT COLUMN: NAVIGATION PILLS -->
+                    <div class="col-md-4 mb-4">
+                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            
+                            <!-- Profile & Security Tab (Active) -->
+                            <button class="nav-link active" id="v-pills-profile-tab" data-bs-toggle="pill" 
+                                    data-bs-target="#v-pills-profile" type="button" role="tab" 
+                                    aria-controls="v-pills-profile" aria-selected="true">
+                                <i class="bi bi-person-fill me-2"></i>Profile & Security
+                            </button>
+
+                            <!-- Operational Settings Tab -->
+                            <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" 
+                                    data-bs-target="#v-pills-settings" type="button" role="tab" 
+                                    aria-controls="v-pills-settings" aria-selected="false">
+                                <i class="bi bi-gear-fill me-2"></i>Operational Settings
+                            </button>
+                            
+                            <!-- Logout Button -->
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-outline-danger w-100 fw-bold" 
+                                        onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right me-1"></i> Logout Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN: TAB CONTENT -->
+                    <div class="col-md-8">
+                        <div class="tab-content" id="v-pills-tabContent">
+                            
+                            <!-- PROFILE & SECURITY PANE -->
+                            <div class="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                                <div class="card card-pos bg-white p-4 mb-5">
+                                    <h4 class="text-success mb-4 text-center">
+                                        <i class="bi bi-person-fill me-2"></i>Update Profile & Password
+                                    </h4>
+                                    
+                                    <form onsubmit="return handleProfileUpdate(event)">
+                                        
+                                        <!-- Profile Picture Section -->
+                                        <div class="row align-items-center mb-4">
+                                            <div class="col-md-auto text-center mb-3 mb-md-0">
+                                                <label class="form-label fw-bold d-block">Current Picture</label>
+                                                <!-- Default profile icon -->
+                                                <div class="profile-icon-lg">
+                                                    <i class="bi bi-person-circle"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-md">
+                                                <label for="profile_picture" class="form-label fw-bold">Upload New Profile Picture (Max 2MB, JPG/PNG)</label>
+                                                <input class="form-control" type="file" id="profile_picture" name="profile_picture" accept="image/*">
+                                                <div class="form-text">Uploading a new image will replace the current one.</div>
+                                                <!-- Preview container -->
+                                                <div id="imagePreviewContainer" class="mt-2 d-none">
+                                                    <img id="imagePreview" src="" alt="Preview" class="profile-pic-lg">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+                                        <h5 class="fw-bold text-secondary mb-3">Personal Details</h5>
+
+                                        <!-- Full Name -->
+                                        <div class="mb-3">
+                                            <label for="full_name" class="form-label fw-semibold">Full Name:</label>
+                                            <input type="text" class="form-control" id="full_name" name="full_name" 
+                                                   value="Maria Santos" required>
+                                        </div>
+
+                                        <!-- Email (Read-only) -->
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label fw-semibold">Email:</label>
+                                            <input type="email" class="form-control" id="email" 
+                                                   value="maria.cashier@chibugan.com" readonly disabled>
+                                            <small class="form-text text-muted">Email address cannot be changed here.</small>
+                                        </div>
+                                        
+                                        <!-- Phone Number -->
+                                        <div class="mb-4">
+                                            <label for="phone_number" class="form-label fw-semibold">Phone Number:</label>
+                                            <input type="text" class="form-control" id="phone_number" name="phone_number" 
+                                                   value="0918-555-1234" required>
+                                        </div>
+
+                                        <hr>
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h5 class="fw-bold text-secondary mb-0">Change Password (Optional)</h5>
+                                            <span class="password-toggle-btn" onclick="togglePasswordFields()">
+                                                <i class="bi bi-pencil-square me-1"></i> Click to change password
+                                            </span>
+                                        </div>
+                                        <p class="text-muted">Fill these fields only if you wish to change your password.</p>
+
+                                        <!-- Password Fields (Hidden by default) -->
+                                        <div id="passwordFields" style="display: none;">
+                                            <!-- Current Password -->
+                                            <div class="mb-3">
+                                                <label for="current_password" class="form-label fw-semibold">Current Password:</label>
+                                                <input type="password" class="form-control" id="current_password" name="current_password" 
+                                                       placeholder="Enter current password">
+                                            </div>
+                                            
+                                            <!-- New Password -->
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label fw-semibold">New Password:</label>
+                                                <input type="password" class="form-control" id="password" name="password" 
+                                                       placeholder="Enter new password (min 8 characters)">
+                                                <small class="text-muted">Minimum 8 characters</small>
+                                            </div>
+
+                                            <!-- Confirm New Password -->
+                                            <div class="mb-4">
+                                                <label for="password_confirmation" class="form-label fw-semibold">Confirm New Password:</label>
+                                                <input type="password" class="form-control" id="password_confirmation" 
+                                                       name="password_confirmation" placeholder="Confirm new password">
+                                                <small class="text-danger d-none" id="passwordMismatch">Passwords do not match!</small>
+                                            </div>
+                                            
+                                            <div class="alert alert-info">
+                                                <i class="bi bi-info-circle me-2"></i>
+                                                <strong>Note:</strong> If you fill any password field, all three password fields are required.
+                                            </div>
+                                        </div>
+                                        
+                                        <hr class="mb-4">
+
+                                        <!-- Save Button -->
+                                        <div class="d-flex justify-content-end align-items-center">
+                                            <button type="submit" class="btn btn-success fw-bold">
+                                                <i class="bi bi-save me-2"></i> Save Changes
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- OPERATIONAL SETTINGS PANE -->
+                            <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+                                <div class="card card-pos bg-white p-4 mb-5">
+                                    <h4 class="text-success mb-4 text-center">
+                                        <i class="bi bi-gear-fill me-2"></i>Cashier System Configuration
+                                    </h4>
+                                    <p class="text-muted text-center mb-4">Configure your cashier station preferences and operational settings.</p>
+                                    
+                                    <form onsubmit="return handleSettingsSave(event)">
+                                        <div class="mb-3">
+                                            <label for="defaultPrinter" class="form-label fw-semibold">Default Receipt Printer</label>
+                                            <select id="defaultPrinter" class="form-select">
+                                                <option value="thermal" selected>Thermal Printer (Kitchen)</option>
+                                                <option value="laser">Laser Printer (Front Desk)</option>
+                                                <option value="none">No Printer (Digital Only)</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="shiftReminder" class="form-label fw-semibold">Shift Reminder Notification</label>
+                                            <select id="shiftReminder" class="form-select">
+                                                <option value="15" selected>15 minutes before shift ends</option>
+                                                <option value="30">30 minutes before shift ends</option>
+                                                <option value="60">1 hour before shift ends</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="mb-4">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="autoPrint" checked>
+                                                <label class="form-check-label fw-semibold" for="autoPrint">
+                                                    Auto-print receipt after completing order
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-success fw-bold">
+                                                <i class="bi bi-save me-2"></i> Save Settings
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-3 mt-5">
+        <div class="container-fluid px-4 text-center">
+            <small>&copy; 2025 CHIBUGAN Cashier Portal. Static Mockup.</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle password fields visibility
+        function togglePasswordFields() {
+            const passwordFields = document.getElementById('passwordFields');
+            const toggleBtn = document.querySelector('.password-toggle-btn');
+            
+            if (passwordFields.style.display === 'none' || passwordFields.style.display === '') {
+                passwordFields.style.display = 'block';
+                toggleBtn.innerHTML = '<i class="bi bi-x-circle me-1"></i> Cancel password change';
+                toggleBtn.classList.add('text-danger');
+                setTimeout(() => {
+                    document.getElementById('current_password').focus();
+                }, 100);
+            } else {
+                passwordFields.style.display = 'none';
+                toggleBtn.innerHTML = '<i class="bi bi-pencil-square me-1"></i> Click to change password';
+                toggleBtn.classList.remove('text-danger');
+                
+                // Clear password fields
+                document.getElementById('current_password').value = '';
+                document.getElementById('password').value = '';
+                document.getElementById('password_confirmation').value = '';
+                document.getElementById('passwordMismatch').classList.add('d-none');
+            }
+        }
+
+        // Handle profile update
+        function handleProfileUpdate(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('current_password').value;
+            const newPassword = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('password_confirmation').value;
+            const passwordFieldsVisible = document.getElementById('passwordFields').style.display !== 'none';
+            
+            // Validate password fields if visible
+            if (passwordFieldsVisible) {
+                const anyPasswordFilled = currentPassword || newPassword || confirmPassword;
+                
+                if (anyPasswordFilled) {
+                    // All fields required if any is filled
+                    if (!currentPassword) {
+                        showError('Please enter your current password.');
+                        return false;
+                    }
+                    if (!newPassword) {
+                        showError('Please enter a new password.');
+                        return false;
+                    }
+                    if (!confirmPassword) {
+                        showError('Please confirm your new password.');
+                        return false;
+                    }
+                    if (newPassword.length < 8) {
+                        showError('New password must be at least 8 characters.');
+                        return false;
+                    }
+                    if (newPassword !== confirmPassword) {
+                        document.getElementById('passwordMismatch').classList.remove('d-none');
+                        showError('Passwords do not match.');
+                        return false;
+                    }
+                    if (newPassword === currentPassword) {
+                        showError('New password must be different from current password.');
+                        return false;
+                    }
+                }
+            }
+            
+            // Simulate successful save
+            const fullName = document.getElementById('full_name').value;
+            showSuccess(`Profile updated successfully for ${fullName}!`);
+            
+            // Hide password fields after save
+            if (passwordFieldsVisible) {
+                togglePasswordFields();
+            }
+            
+            return false;
+        }
+
+        // Handle settings save
+        function handleSettingsSave(event) {
+            event.preventDefault();
+            showSuccess('Operational settings saved successfully!');
+            return false;
+        }
+
+        // Handle logout
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logged out successfully!');
+                window.location.href = '../welcome.html';
+            }
+        }
+
+        // Image preview
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('profile_picture');
+            if (fileInput) {
+                fileInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const container = document.getElementById('imagePreviewContainer');
+                            const preview = document.getElementById('imagePreview');
+                            preview.src = e.target.result;
+                            container.classList.remove('d-none');
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Password match validation
+            const confirmInput = document.getElementById('password_confirmation');
+            const passwordInput = document.getElementById('password');
+            
+            if (confirmInput && passwordInput) {
+                const validateMatch = () => {
+                    const mismatch = document.getElementById('passwordMismatch');
+                    if (confirmInput.value && passwordInput.value !== confirmInput.value) {
+                        mismatch.classList.remove('d-none');
+                    } else {
+                        mismatch.classList.add('d-none');
+                    }
+                };
+                
+                confirmInput.addEventListener('input', validateMatch);
+                passwordInput.addEventListener('input', validateMatch);
+            }
+        });
+
+        // Show success message
+        function showSuccess(message) {
+            const alert = document.getElementById('successAlert');
+            document.getElementById('successMessage').textContent = message;
+            alert.classList.remove('d-none');
+            alert.classList.add('show');
+            setTimeout(() => {
+                alert.classList.remove('show');
+                alert.classList.add('d-none');
+            }, 4000);
+        }
+
+        // Show error message
+        function showError(message) {
+            const alert = document.getElementById('errorAlert');
+            document.getElementById('errorMessage').textContent = message;
+            alert.classList.remove('d-none');
+            alert.classList.add('show');
+            setTimeout(() => {
+                alert.classList.remove('show');
+                alert.classList.add('d-none');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHIBUGAN Cashier Operations - Dashboard</title>
+        <link rel="icon" type="image/x-icon" href="logo.jpg">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background-color: #f5f6fa;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        .card-pos {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-pos:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .kpi-card {
+            border-radius: 0.75rem;
+        }
+
+        .kpi-card h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .admin-nav {
+            background-color: #212529;
+        }
+
+        .admin-nav .btn {
+            transition: all 0.2s ease;
+        }
+
+        .admin-nav .btn:hover {
+            opacity: 1 !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sticky-nav-offset {
+            top: 56px;
+        }
+
+        .z-index-top {
+            z-index: 1030;
+        }
+
+        footer {
+            background-color: #1e1e2f;
+            color: #ddd;
+        }
+
+        .list-group-item {
+            transition: background-color 0.2s;
+        }
+
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .admin-nav .btn {
+                font-size: 0.8rem;
+                padding: 0.75rem 0.75rem !important;
+            }
+            
+            .kpi-card h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="min-vh-100">
+
+    <!-- ========== TOP NAVIGATION BAR ========== -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg sticky-top z-index-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand text-success fs-4 fw-bold" href="#">
+                <i class="bi bi-shop me-2"></i>CHIBUGAN Cashier Panel
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-secondary fw-semibold me-4 d-none d-md-inline">
+                    <i class="bi bi-person-circle me-1"></i> Cashier: Maria
+                </span>
+                <a href="../welcome.html" class="text-danger fw-semibold text-decoration-none">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== CASHIER NAVIGATION BAR ========== -->
+    <div class="bg-dark shadow-sm sticky-top admin-nav sticky-nav-offset">
+        <div class="container-fluid px-4 d-flex overflow-x-auto">
+            <!-- Admin Panel link (visible because user is admin) -->
+            <a href="#" class="btn btn-danger py-3 px-4 rounded-0 fw-bolder border-0 text-white">
+                <i class="bi bi-gear-fill me-1"></i> Admin Panel
+            </a>
+            
+            <!-- Dashboard (Active) -->
+            <a href="#" class="btn py-3 px-4 rounded-0 fw-bold border-0 text-white" style="background-color: #198754;">
+                <i class="bi bi-bar-chart-fill me-1"></i> Dashboard
+            </a>
+            
+            <!-- Pending Orders -->
+            <a href="#" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-bell-fill me-1"></i> Pending Orders
+            </a>
+            
+            <!-- Completed Orders -->
+            <a href="#" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-check2-circle me-1"></i> Completed Orders
+            </a>
+            
+            <!-- Customer Wallet -->
+            <a href="#" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-credit-card-fill me-1"></i> Customer Wallet
+            </a>
+            
+            <!-- Settings -->
+            <a href="#" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-gear-wide-connected me-1"></i> Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <div class="container-fluid px-4 mt-4 pb-5">
+        <h1 class="fs-2 fw-bold text-dark mb-4">
+            <i class="bi bi-speedometer2 me-2 text-success"></i> Operations Dashboard
+        </h1>
+        <p class="text-secondary mb-4">A high-level overview of key operational metrics for today.</p>
+
+        <!-- KPI Cards Row -->
+        <div class="row g-4 mb-5 h-100">
+            
+            <!-- Total Sales -->
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-pos kpi-card p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-uppercase text-secondary fw-semibold mb-1">Total Sales</p>
+                            <h2 class="display-5 fw-bolder text-success">₱ 3,450.00</h2>
+                        </div>
+                        <i class="bi bi-graph-up-arrow display-4 text-success opacity-50"></i>
+                    </div>
+                    <small class="text-muted mt-2">Target: ₱ 5,000.00</small>
+                    <!-- Progress bar toward target -->
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 69%;" aria-valuenow="69" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Orders -->
+            <div class="col-sm-6 col-lg-3">
+                <div class="card card-pos kpi-card p-4 bg-white border-start border-warning border-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-uppercase text-secondary fw-semibold mb-1">Pending Orders</p>
+                            <h2 class="display-5 fw-bolder text-warning">7</h2>
+                        </div>
+                        <i class="bi bi-bell display-4 text-warning opacity-50"></i>
+                    </div>
+                    <small class="text-muted mt-2">Review required</small>
+                </div>
+            </div>
+            
+            <!-- Total Transactions -->
+            <div class="col-sm-6 col-lg-3 h-100">
+                <div class="card card-pos kpi-card p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-uppercase text-secondary fw-semibold mb-1">Total Transactions</p>
+                            <h2 class="display-5 fw-bolder text-dark">34</h2>
+                        </div>
+                        <i class="bi bi-receipt display-4 text-dark opacity-50"></i>
+                    </div>
+                    <small class="text-muted mt-2">Completed & Pending</small>
+                </div>
+            </div>
+            
+            <!-- Wallet Top-Ups -->
+            <div class="col-sm-6 col-lg-3 h-100">
+                <div class="card card-pos kpi-card p-4 bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-uppercase text-secondary fw-semibold mb-1">Wallet Top-Ups</p>
+                            <h2 class="display-5 fw-bolder text-primary">₱ 1,200.00</h2>
+                        </div>
+                        <i class="bi bi-wallet2 display-4 text-primary opacity-50"></i>
+                    </div>
+                    <small class="text-muted mt-2">Total credit added today</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Transactions & Top Sellers Row -->
+        <div class="row g-4">
+            
+            <!-- Recent Completed Transactions -->
+            <div class="col-lg-6">
+                <div class="card card-pos bg-white p-4 h-100">
+                    <h3 class="fs-4 fw-bold text-dark mb-3 border-bottom pb-2">
+                        <i class="bi bi-clock-history me-2 text-dark"></i> Recent Completed Transactions
+                    </h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">T-ID: #1001</div>
+                            <div class="text-end">
+                                <span class="badge bg-success me-2">Cash</span>
+                                <span class="fw-bold text-success">₱ 185.00</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">T-ID: #1002</div>
+                            <div class="text-end">
+                                <span class="badge bg-info me-2">Online</span>
+                                <span class="fw-bold text-success">₱ 350.00</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">T-ID: #1003</div>
+                            <div class="text-end">
+                                <span class="badge bg-success me-2">Cash</span>
+                                <span class="fw-bold text-success">₱ 120.00</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">T-ID: #1004</div>
+                            <div class="text-end">
+                                <span class="badge bg-secondary me-2">Credit</span>
+                                <span class="fw-bold text-success">₱ 225.00</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">T-ID: #1005</div>
+                            <div class="text-end">
+                                <span class="badge bg-success me-2">Cash</span>
+                                <span class="fw-bold text-success">₱ 85.00</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <a href="#" class="btn btn-sm btn-outline-secondary mt-3">
+                        View All Completed Orders <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Top Selling Items -->
+            <div class="col-lg-6">
+                <div class="card card-pos bg-white p-4 h-100">
+                    <h3 class="fs-4 fw-bold text-dark mb-3 border-bottom pb-2">
+                        <i class="bi bi-fire me-2 text-danger"></i> Top Selling Items (Today)
+                    </h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">
+                                <i class="bi bi-trophy-fill text-warning me-2"></i>1. Chicken Adobo
+                            </div>
+                            <span class="badge bg-danger rounded-pill">15 sold</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">
+                                <i class="bi bi-2-circle-fill text-secondary me-2"></i>2. Rice (Cup)
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">12 sold</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">
+                                <i class="bi bi-3-circle-fill text-secondary me-2"></i>3. Pork Sinigang
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">10 sold</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">
+                                <i class="bi bi-4-circle-fill text-secondary me-2"></i>4. Iced Tea
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">9 sold</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="fw-semibold">
+                                <i class="bi bi-5-circle-fill text-secondary me-2"></i>5. Leche Flan
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">8 sold</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Quick Actions Row -->
+        <div class="row g-3 mt-4">
+            <div class="col-md-3">
+                <button class="btn btn-outline-success w-100 py-3 fw-semibold">
+                    <i class="bi bi-cart-plus me-2"></i> New Order
+                </button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-warning w-100 py-3 fw-semibold">
+                    <i class="bi bi-bell me-2"></i> View Pending
+                </button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-primary w-100 py-3 fw-semibold">
+                    <i class="bi bi-wallet2 me-2"></i> Top-Up Wallet
+                </button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-outline-info w-100 py-3 fw-semibold">
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i> End-of-Day Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-3 mt-5">
+        <div class="container-fluid px-4 text-center">
+            <small>&copy; 2025 CHIBUGAN POS System. Static Mockup.</small>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

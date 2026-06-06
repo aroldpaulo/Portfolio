@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHIBUGAN Cashier Operations - Pending Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="casheir.css">    
+
+</head>
+<body class="min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-lg sticky-top z-index-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand text-success fs-4 fw-bold" href="#">
+                <i class="bi bi-shop me-2"></i>CHIBUGAN Cashier Panel 
+            </a>
+          
+        </div>
+    </nav>
+
+    <div class="bg-dark shadow-sm sticky-top z-index-top" style="top: 66px;">
+        <div class="container-fluid px-4 d-flex">
+            
+         {{-- CONDITIONAL ADMIN LINK: This check relies on the corrected isAdmin() method in User.php --}}
+        @if (Auth::user()->isAdmin())
+            <a href="{{route('admin.dashboard')}}" class="btn btn-danger py-3 px-4 rounded-0 fw-bolder border-0 text-white" >
+                <i class="bi bi-gear-fill me-1"></i> Admin Panel
+            </a>
+        @endif
+            
+            <a href="{{ route('cashier.dashboard') }}" class="btn py-3 px-4 rounded-0 fw-bold border-0 text-white" >
+                <i class="bi bi-bar-chart-fill me-1"></i> Dashboard
+            </a>
+            <a href="#pending" class="btn btn-success py-3 px-4 rounded-0 fw-bold border-0">
+                <i class="bi bi-bell-fill me-1"></i> Pending Orders ({{ $orders->total() }})
+            </a>
+            <a href="{{ route('cashier.completed_orders.index') }}" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-check2-circle me-1"></i> Completed Orders
+            </a>
+            <a href="{{ route('cashier.wallet.index') }}" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+                <i class="bi bi-credit-card-fill me-1"></i> Customer Wallet
+            </a>
+             <a href="{{ route('cashier.settings') }}" class="btn text-white py-3 px-4 rounded-0 fw-semibold opacity-75">
+            <i class="bi bi-credit-card-fill me-1"></i> Settings
+        </a>
+    </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4 mt-4 pb-5">
+        <h1 class="fs-2 fw-bold text-dark mb-4"><i class="bi bi-bell-fill me-2 text-success"></i> Pending Orders Queue</h1>
+        <p class="text-secondary mb-4">Orders that are awaiting acceptance, preparation, or pickup/delivery.</p>
+
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+
+        <div class="card card-pos bg-white p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fs-5 fw-bold text-success">Current Queue ({{ $orders->total() }} Orders)</h3>
+                <button class="btn btn-outline-dark btn-sm fw-semibold" onclick="location.reload()"><i class="bi bi-arrow-clockwise me-1"></i> Refresh List</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle table-pos">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Order ID</th>
+                            <th scope="col">Customer / Source</th>
+                            <th scope="col">Total Items</th>
+                            <th scope="col">Order Type</th>
+                            <th scope="col">Total Amount</th>
+                            <th scope="col">Time Placed</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($orders as $order)
+                        <tr onclick="location.href='order-details.html?id={{ $order->order_code }}';" style="cursor: pointer;">
+                            <td class="fw-bold">{{ $order->order_code }}</td>
+                            <td>{{ $order->user->full_name ?? 'N/A' }}</td> <!-- From user relationship -->
+                            <td>N/A</td> <!-- Not in table -->
+                            <td><span class="badge bg-{{ $order->order_type == 'Take-Out' ? 'secondary' : 'info text-dark' }} p-2 fw-semibold">{{ $order->order_type }}</span></td>
+                            <td>₱ {{ number_format($order->total_amount, 2) }}</td>
+                            <td>{{ $order->created_at ? $order->created_at->format('g:i A') : 'N/A' }}</td> <!-- Fixed null check -->
+                            <td>
+                                <form method="POST" action="{{ route('ashier.pending_orders.complete', $order->id) }}" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-success fw-semibold">Complete</button>
+                                </form>
+                            </td>
+                            <td><a href="order-details.html?id={{ $order->order_code }}" class="btn btn-sm btn-outline-primary fw-semibold">View Details</a></td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center pt-3">
+                <small class="text-muted">Displaying {{ $orders->firstItem() }} to {{ $orders->lastItem() }} of {{ $orders->total() }} pending orders.</small>
+                {{ $orders->links() }}
+            </div>
+
+        </div>
+        
+    </div>
+
+    <footer class="bg-dark text-white py-3 mt-5">
+        <div class="container-fluid px-4 text-center">
+            <small>&copy; 2025 CHIBUGAN POS System. Static Mockup.</small>
+        </div>
+    </footer>
+
+</body>
+</html>

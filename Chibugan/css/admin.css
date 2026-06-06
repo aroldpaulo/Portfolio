@@ -1,0 +1,946 @@
+/* =====================================================
+   GLOBAL & BODY STYLES
+   ===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f5f6fa;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+}
+
+/* =====================================================
+   CARD STYLES
+   ===================================================== */
+
+.card-admin {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-admin:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Info cards with colored left borders */
+.info-card-success {
+    border-left: 5px solid #198754;
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.info-card-primary {
+    border-left: 5px solid #0d6efd;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
+}
+
+.info-card-warning {
+    border-left: 5px solid #ffc107;
+    background: linear-gradient(135deg, #ffffff 0%, #fffef0 100%);
+}
+
+.info-card-danger {
+    border-left: 5px solid #dc3545;
+    background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+}
+
+/* =====================================================
+   ORDER CARD STYLES (Kanban Board)
+   ===================================================== */
+
+.order-card {
+    border-left: 4px solid #007bff;
+    transition: transform 0.2s;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-column-preparing .order-card {
+    border-left-color: #ffc107;
+}
+
+.order-column-completed .order-card {
+    border-left-color: #28a745;
+}
+
+.order-column-cancelled .order-card {
+    border-left-color: #dc3545;
+}
+
+.order-column {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* =====================================================
+   ADMIN NAVIGATION BAR
+   ===================================================== */
+
+.admin-nav {
+    background-color: #212529;
+    position: sticky;
+    top: 56px;
+    z-index: 1020;
+}
+
+.admin-nav .btn {
+    transition: all 0.2s ease;
+}
+
+.admin-nav .btn:hover {
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.admin-nav .btn.active-nav {
+    opacity: 1 !important;
+    border-bottom: 3px solid #dc3545;
+}
+
+/* =====================================================
+   NAVBAR STYLES
+   ===================================================== */
+
+.navbar-admin {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.navbar-admin .navbar-brand {
+    color: #dc3545;
+    font-weight: 700;
+    font-size: 1.4rem;
+}
+
+.logout-btn {
+    color: #dc3545;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.logout-btn:hover {
+    color: #b02a37;
+}
+
+.logout-warning {
+    color: #dc3545;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.logout-warning:hover {
+    color: #b02a37;
+}
+
+/* =====================================================
+   NAVIGATION PILLS
+   ===================================================== */
+
+.nav-pills .nav-link {
+    border-radius: 0.5rem;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.nav-pills .nav-link:not(.active):hover {
+    background-color: #f8f9fa;
+    color: #dc3545;
+}
+
+/* =====================================================
+   UTILITY CLASSES
+   ===================================================== */
+
+.sticky-nav-offset {
+    top: 56px;
+}
+
+.nav-active {
+    position: relative;
+}
+
+.nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: white;
+}
+
+.top-badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* =====================================================
+   FOOTER STYLES
+   ===================================================== */
+
+footer {
+    background-color: #1e1e2f;
+    color: #ddd;
+    margin-top: 3rem;
+    padding: 1rem 0;
+}
+
+/* =====================================================
+   PROFILE DROPDOWN STYLES (Consolidated)
+   ===================================================== */
+
+.profile-dropdown {
+    padding: 0;
+    min-width: 280px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
+    z-index: 1060 !important;
+}
+
+.dropdown-profile-header {
+    background: linear-gradient(135deg, #198754, #0d6efd);
+    padding: 20px;
+    border-radius: 16px 16px 0 0;
+    text-align: center;
+    color: white;
+}
+
+.dropdown-avatar {
+    width: 70px;
+    height: 70px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 2rem;
+    font-weight: bold;
+    border: 2px solid white;
+    color: white;
+}
+
+.dropdown-avatar-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+.dropdown-name {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: white !important;
+}
+
+.dropdown-email {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.dropdown-divider-custom {
+    margin: 8px 0;
+    border-color: #eee;
+}
+
+.dropdown-item-custom {
+    padding: 10px 20px;
+    transition: all 0.2s;
+    color: #1a1a2e !important;
+}
+
+.dropdown-item-custom:hover {
+    background-color: #f8f9fa;
+    padding-left: 28px;
+}
+
+.dropdown-item-custom i {
+    width: 24px;
+    margin-right: 10px;
+    color: #198754;
+}
+
+.dropdown-item-custom.text-danger i {
+    color: #dc3545;
+}
+
+.dropdown-footer {
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-radius: 0 0 16px 16px;
+    font-size: 0.7rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+.nav-link-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.nav-avatar {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: white;
+}
+
+.nav-avatar-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* =====================================================
+   DROPDOWN MENU Z-INDEX FIXES
+   ===================================================== */
+
+.dropdown-menu {
+    z-index: 1060 !important;
+}
+
+.navbar-admin .dropdown-menu {
+    z-index: 1060 !important;
+}
+
+.navbar-admin .dropdown {
+    position: relative;
+}
+
+.navbar-admin .dropdown-menu-end {
+    right: 0;
+    left: auto !important;
+}
+
+/* =====================================================
+   TOAST NOTIFICATION
+   ===================================================== */
+
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 300px;
+}
+
+/* =====================================================
+   SPINNER OVERLAY
+   ===================================================== */
+
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner-overlay.show {
+    display: flex;
+}
+
+/* =====================================================
+   TABLE STYLES
+   ===================================================== */
+
+.table th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+.table-hover tbody tr {
+    transition: background-color 0.2s;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* =====================================================
+   LIST GROUP STYLES
+   ===================================================== */
+
+.list-group-item {
+    transition: background-color 0.2s;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+/* =====================================================
+   FORM STYLES
+   ===================================================== */
+
+.form-control {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 12px 15px;
+    transition: all 0.3s;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+/* =====================================================
+   STATUS BADGES
+   ===================================================== */
+
+.status-badge {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* =====================================================
+   ACTION BADGES (Audit Logs)
+   ===================================================== */
+
+.action-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.action-CREDIT_UPDATE {
+    background-color: #28a745;
+    color: white;
+}
+
+.action-MENU_EDIT {
+    background-color: #007bff;
+    color: white;
+}
+
+.action-USER_ACTION {
+    background-color: #ffc107;
+    color: #856404;
+}
+
+.action-BACKUP {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.action-SETTINGS {
+    background-color: #6c757d;
+    color: white;
+}
+
+.action-STATUS_CHANGE {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.action-LOGIN {
+    background-color: #20c997;
+    color: white;
+}
+
+.action-LOGOUT {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* =====================================================
+   QUANTITY BADGES
+   ===================================================== */
+
+.quantity-badge {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.quantity-low {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.quantity-out {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.quantity-good {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* =====================================================
+   ROLE BADGES
+   ===================================================== */
+
+.badge-admin {
+    background-color: #dc3545;
+}
+
+.badge-cashier {
+    background-color: #6c757d;
+}
+
+.badge-customer {
+    background-color: #0d6efd;
+}
+
+/* =====================================================
+   BUTTON STYLES
+   ===================================================== */
+
+.btn-action {
+    min-width: 100px;
+}
+
+.btn-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.btn-save {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-save:hover {
+    background: #b02a37;
+    transform: translateY(-2px);
+}
+
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+}
+
+.btn-upload {
+    background: #dc3545;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-block;
+    border: none;
+}
+
+.btn-upload:hover {
+    background: #b02a37;
+    color: white;
+}
+
+/* =====================================================
+   IMAGE & UPLOAD STYLES
+   ===================================================== */
+
+.menu-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.image-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #dc3545;
+}
+
+.image-upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.image-upload-area:hover {
+    border-color: #007bff;
+    background-color: #f8f9fa;
+}
+
+.image-preview-container {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #dc3545;
+    color: white;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.current-images-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* =====================================================
+   PROFILE PAGE SPECIFIC STYLES
+   ===================================================== */
+
+.profile-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+    padding: 40px;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.profile-header-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.profile-header-icon i {
+    font-size: 40px;
+}
+
+.profile-header h2 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: white !important;
+}
+
+.profile-header p {
+    opacity: 0.9;
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.profile-body {
+    padding: 40px;
+}
+
+.profile-picture-section {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.profile-picture-wrapper {
+    display: inline-block;
+}
+
+.profile-pic-lg {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #dc3545;
+}
+
+.profile-icon-lg {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dc3545, #b02a37);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: white;
+}
+
+.profile-modal-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #dc3545;
+}
+
+.profile-modal-icon-container {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e9ecef;
+    border: 3px solid #6c757d;
+    color: #6c757d;
+}
+
+.profile-modal-icon {
+    font-size: 50px;
+}
+
+/* =====================================================
+   FORM SECTION STYLES
+   ===================================================== */
+
+.form-section {
+    margin-bottom: 35px;
+}
+
+.form-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.form-section-title i {
+    color: #dc3545;
+    margin-right: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.form-group label i {
+    color: #dc3545;
+    margin-right: 8px;
+}
+
+/* =====================================================
+   PASSWORD FIELDS TOGGLE
+   ===================================================== */
+
+.password-fields {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+.password-fields.show {
+    display: block;
+}
+
+.password-toggle-btn {
+    cursor: pointer;
+    color: #dc3545;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.password-toggle-btn:hover {
+    text-decoration: underline;
+}
+
+/* =====================================================
+   STATS CARDS
+   ===================================================== */
+
+.stats-card {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-3px);
+}
+
+.stats-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #dc3545;
+    margin-bottom: 5px;
+}
+
+.stats-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #6c757d;
+    letter-spacing: 0.5px;
+}
+
+/* =====================================================
+   ACTION BUTTONS CONTAINER
+   ===================================================== */
+
+.action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e9ecef;
+}
+
+/* =====================================================
+   DETAILS CARD STYLES
+   ===================================================== */
+
+.details-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.details-label {
+    color: #6c757d;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+/* =====================================================
+   CHART & CANVAS STYLES
+   ===================================================== */
+
+.chart-container {
+    position: relative;
+    min-height: 300px;
+    width: 100%;
+}
+
+canvas {
+    max-height: 300px;
+    width: 100%;
+}
+
+/* =====================================================
+   RESPONSIVE MEDIA QUERIES
+   ===================================================== */
+
+@media (max-width: 768px) {
+    .admin-nav .btn {
+        font-size: 0.8rem;
+        padding: 0.75rem 0.75rem !important;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .dropdown-menu-end {
+        right: 0;
+        left: auto !important;
+    }
+    
+    .profile-header {
+        padding: 30px 20px;
+    }
+    
+    .profile-body {
+        padding: 20px;
+    }
+    
+    .stats-card {
+        margin-bottom: 15px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}

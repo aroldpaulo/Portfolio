@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | CHIBUGAN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        .order-card {
+            transition: transform 0.2s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .cancelled-order {
+            opacity: 0.8;
+            background-color: #f8f9fa;
+            border: 1px dashed #dc3545 !important;
+        }
+        .completed-order {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 1px solid #dee2e6 !important;
+        }
+        .refund-badge {
+            background-color: #28a745;
+            color: white;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+        }
+        .nav-tabs .nav-link.active {
+            color: #198754;
+            border-bottom: 3px solid #198754;
+            background-color: transparent;
+        }
+        .nav-tabs .nav-link:hover:not(.active) {
+            color: #495057;
+        }
+        .empty-state {
+            padding: 4rem 1rem;
+            text-align: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .empty-state i {
+            font-size: 4rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+        .order-number {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        .tab-content {
+            min-height: 400px;
+        }
+        .user-balance-card {
+            background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(25, 135, 84, 0.2);
+        }
+        .order-type-badge {
+            background-color: #6c757d;
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+        }
+        .item-price {
+            font-size: 0.85rem;
+        }
+        .order-date {
+            font-size: 0.8rem;
+        }
+        .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            margin-right: 8px;
+        }
+        .profile-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(223, 223, 223);
+            color: #6c757d;
+            font-size: 20px;
+            margin-right: 8px;
+            line-height: 1;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-top: -3px;
+        }
+        footer {
+            background-color: #1e1e2f;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== NAVIGATION BAR ========== -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#">
+            <i class="bi bi-person-circle profile-icon"></i>
+            CHIBUGAN
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="dashboard.html">
+                        <i class="bi bi-house-door-fill me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="menu.html">
+                        <i class="bi bi-list-check me-1"></i>Menu
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="orders.html" aria-current="page">
+                        <i class="bi bi-clock-history me-1"></i>My Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="account.html">
+                        <i class="bi bi-person-circle me-1"></i>Account
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-link text-warning fw-bold">
+                        <i class="bi bi-credit-card-fill me-1"></i>
+                        ₱500.00
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<div class="container-fluid p-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="fs-4 fw-bold text-dark mb-3">
+                <i class="bi bi-clock-history me-2"></i> My Order History
+            </h2>
+
+            <!-- User Balance Card -->
+            <div class="user-balance-card">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-1 fw-bold">Juan Dela Cruz</h5>
+                        <p class="mb-0 opacity-75">Current credit balance</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <h3 class="mb-0 fw-bold">₱500.00</h3>
+                        <small class="opacity-75">Available for orders</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Tabs -->
+            <ul class="nav nav-tabs mb-4" id="ordersTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab">
+                        <i class="bi bi-hourglass-split me-2"></i>Active
+                        <span class="badge bg-warning ms-2">2</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
+                        <i class="bi bi-check-circle me-2"></i>Completed
+                        <span class="badge bg-success ms-2">3</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="cancelled-tab" data-bs-toggle="tab" data-bs-target="#cancelled" type="button" role="tab">
+                        <i class="bi bi-x-circle me-2"></i>Cancelled
+                        <span class="badge bg-danger ms-2">1</span>
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="ordersTabContent">
+                
+                <!-- Active Orders Tab -->
+                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                    <div class="row g-3">
+                        
+                        <!-- Active Order 1: New -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card order-card p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 order-number">#ORD-2025-001</h6>
+                                        <small class="text-muted order-date">March 15, 2025 · 2:30 PM</small>
+                                    </div>
+                                    <span class="badge bg-info status-badge">New</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="order-type-badge rounded-pill px-2">Take-Out</span>
+                                </div>
+                                <div class="order-items mb-2">
+                                    <div class="d-flex justify-content-between small">
+                                        <span>2x Chicken Adobo</span>
+                                        <span class="item-price">₱150.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small">
+                                        <span>1x Buko Juice</span>
+                                        <span class="item-price">₱35.00</span>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">Total: ₱185.00</span>
+                                    <button class="btn btn-sm btn-outline-danger cancel-order-btn" 
+                                            data-order-id="1" 
+                                            data-order-number="#ORD-2025-001" 
+                                            data-total-amount="185.00">
+                                        <i class="bi bi-x-circle me-1"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Order 2: Preparing -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card order-card p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 order-number">#ORD-2025-002</h6>
+                                        <small class="text-muted order-date">March 15, 2025 · 1:00 PM</small>
+                                    </div>
+                                    <span class="badge bg-primary status-badge">Preparing</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="order-type-badge rounded-pill px-2">Dine-In</span>
+                                </div>
+                                <div class="order-items mb-2">
+                                    <div class="d-flex justify-content-between small">
+                                        <span>1x Sinigang na Baboy</span>
+                                        <span class="item-price">₱85.00</span>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">Total: ₱85.00</span>
+                                    <button class="btn btn-sm btn-outline-danger cancel-order-btn" 
+                                            data-order-id="2" 
+                                            data-order-number="#ORD-2025-002" 
+                                            data-total-amount="85.00">
+                                        <i class="bi bi-x-circle me-1"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- Completed Orders Tab -->
+                <div class="tab-pane fade" id="completed" role="tabpanel" aria-labelledby="completed-tab">
+                    <div class="row g-3">
+                        
+                        <!-- Completed Order 1 -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card order-card completed-order p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 order-number">#ORD-2025-003</h6>
+                                        <small class="text-muted order-date">March 14, 2025 · 6:00 PM</small>
+                                    </div>
+                                    <span class="badge bg-success status-badge">Completed</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="order-type-badge rounded-pill px-2">Take-Out</span>
+                                </div>
+                                <div class="order-items mb-2">
+                                    <div class="d-flex justify-content-between small">
+                                        <span>1x Pancit Canton</span>
+                                        <span class="item-price">₱60.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small">
+                                        <span>2x Buko Juice</span>
+                                        <span class="item-price">₱70.00</span>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">Total: ₱130.00</span>
+                                    <span class="badge bg-success"><i class="bi bi-check-lg"></i> Done</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Completed Order 2 -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card order-card completed-order p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 order-number">#ORD-2025-004</h6>
+                                        <small class="text-muted order-date">March 13, 2025 · 12:30 PM</small>
+                                    </div>
+                                    <span class="badge bg-success status-badge">Completed</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="order-type-badge rounded-pill px-2">Dine-In</span>
+                                </div>
+                                <div class="order-items mb-2">
+                                    <div class="d-flex justify-content-between small">
+                                        <span>3x Chicken Adobo</span>
+                                        <span class="item-price">₱225.00</span>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">Total: ₱225.00</span>
+                                    <span class="badge bg-success"><i class="bi bi-check-lg"></i> Done</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Completed Order 3 -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card order-card completed-order p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 order-number">#ORD-2025-005</h6>
+                                        <small class="text-muted order-date">March 12, 2025 · 8:00 AM</small>
+                                    </div>
+                                    <span class="badge bg-success status-badge">Completed</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="order-type-badge rounded-pill px-2">Take-Out</span>
+                                </div>
+                                <div class="order-items mb-2">
+                                    <div class="d-flex justify-content-between small">
+                                        <span>1x Sinigang na Baboy</span>
+                                        <span class="item-price">₱85.00</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between small">
+                                        <span>1x Buko Juice</span>
+                                        <span class="item-price">₱35.00</span>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">Total: ₱120.00</span>
+                                    <span class="badge bg-success"><i class="bi bi-check-lg"></i> Done</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- Cancelled Orders Tab -->
+                <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+                    <div class="row g-3">
+                        
+                        <!-- Cancelled Order 1 -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card order-card cancelled-order p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 order-number">#ORD-2025-006</h6>
+                                        <small class="text-muted order-date">March 11, 2025 · 3:00 PM</small>
+                                    </div>
+                                    <span class="badge bg-danger status-badge">Cancelled</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="order-type-badge rounded-pill px-2">Take-Out</span>
+                                </div>
+                                <div class="order-items mb-2">
+                                    <div class="d-flex justify-content-between small">
+                                        <span>1x Pancit Canton</span>
+                                        <span class="item-price">₱60.00</span>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-muted">Total: ₱60.00</span>
+                                    <span class="badge refund-badge"><i class="bi bi-arrow-counterclockwise"></i> Refunded</span>
+                                </div>
+                                <small class="text-muted mt-2 d-block">Reason: Changed my mind</small>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Order Confirmation Modal -->
+<div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title text-dark" id="cancelOrderModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Order Cancellation
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="bi bi-x-circle-fill text-warning" style="font-size: 3rem;"></i>
+                </div>
+                <h6 class="text-center fw-bold mb-3" id="cancelOrderNumber">Cancel Order: #ORD-2025-001</h6>
+                
+                <div class="alert alert-warning">
+                    <div class="d-flex justify-content-between">
+                        <span>Order Total:</span>
+                        <span class="fw-bold" id="cancelOrderAmount">₱ 0.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <span>Refund Amount:</span>
+                        <span class="fw-bold text-success" id="cancelRefundAmount">₱ 0.00</span>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="cancelReason" class="form-label fw-semibold">Reason for Cancellation (Optional)</label>
+                    <textarea class="form-control" id="cancelReason" rows="3" 
+                              placeholder="Please specify the reason for cancelling this order..."></textarea>
+                </div>
+                
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-diamond-fill me-2"></i>
+                    <strong>Important:</strong> This action cannot be undone. Once cancelled, the order will be removed from the kitchen queue and credits will be refunded to your account.
+                </div>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="confirmCancellation">
+                    <label class="form-check-label" for="confirmCancellation">
+                        I understand that this action is irreversible
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-outline-secondary w-50" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-2"></i> Go Back
+                </button>
+                <button type="button" class="btn btn-danger w-50" id="confirmCancelBtn" disabled>
+                    <i class="bi bi-check-circle me-2"></i> Cancel Order
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="py-4 mt-5">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2025 CHIBUGAN. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let currentOrderId = null;
+        let currentOrderAmount = 0;
+        
+        // Cancel order button click
+        document.querySelectorAll('.cancel-order-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const orderId = this.dataset.orderId;
+                const orderNumber = this.dataset.orderNumber;
+                const totalAmount = parseFloat(this.dataset.totalAmount);
+                
+                currentOrderId = orderId;
+                currentOrderAmount = totalAmount;
+                
+                // Update modal content
+                document.getElementById('cancelOrderNumber').textContent = `Cancel Order: ${orderNumber}`;
+                document.getElementById('cancelOrderAmount').textContent = `₱ ${totalAmount.toFixed(2)}`;
+                document.getElementById('cancelRefundAmount').textContent = `₱ ${totalAmount.toFixed(2)}`;
+                
+                // Reset form
+                document.getElementById('cancelReason').value = '';
+                document.getElementById('confirmCancellation').checked = false;
+                document.getElementById('confirmCancelBtn').disabled = true;
+                
+                // Show modal
+                const cancelModal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
+                cancelModal.show();
+            });
+        });
+        
+        // Confirmation checkbox change
+        document.getElementById('confirmCancellation').addEventListener('change', function() {
+            document.getElementById('confirmCancelBtn').disabled = !this.checked;
+        });
+        
+        // Confirm cancellation button
+        document.getElementById('confirmCancelBtn').addEventListener('click', function() {
+            if (!currentOrderId) return;
+            
+            const cancelReason = document.getElementById('cancelReason').value;
+            
+            // Disable button and show loading
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Cancelling...';
+            
+            // Simulate API call with timeout
+            setTimeout(() => {
+                // Simulate successful cancellation
+                const refundAmount = currentOrderAmount;
+                
+                let successMessage = `Order cancelled successfully!`;
+                successMessage += `\n\n₱${refundAmount.toFixed(2)} has been refunded to your account.`;
+                successMessage += `\nYour new balance: ₱${(500.00 + refundAmount).toFixed(2)}`;
+                
+                if (cancelReason) {
+                    successMessage += `\nReason: ${cancelReason}`;
+                }
+                
+                alert(successMessage);
+                
+                // Close modal
+                const cancelModal = bootstrap.Modal.getInstance(document.getElementById('cancelOrderModal'));
+                if (cancelModal) {
+                    cancelModal.hide();
+                }
+                
+                // Reload page to update order status
+                console.log('Reloading page...');
+                window.location.reload();
+                
+            }, 1500); // Simulate 1.5 second network delay
+        });
+        
+        // Tab functionality
+        const triggerTabList = [].slice.call(document.querySelectorAll('#ordersTab button'));
+        triggerTabList.forEach(function (triggerEl) {
+            const tabTrigger = new bootstrap.Tab(triggerEl);
+            
+            triggerEl.addEventListener('click', function (event) {
+                event.preventDefault();
+                tabTrigger.show();
+            });
+        });
+    });
+</script>
+</body>
+</html>
