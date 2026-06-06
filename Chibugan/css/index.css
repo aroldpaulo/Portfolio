@@ -158,3 +158,226 @@
             transform: translateY(-6px);
             box-shadow: 0 18px 32px rgba(0,0,0,0.12);
         }
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Toast Notifications */
+        .toast-notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 350px;
+        }
+        .toast-notification .alert {
+            margin-bottom: 10px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
+            z-index: -1;
+        }
+        .hero-content {
+            color: white;
+            padding: 20px;
+            animation: fadeInUp 1s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Navbar */
+        .navbar {
+            transition: all 0.4s ease;
+            padding: 1rem 0;
+        }
+        .navbar-transparent {
+            background: transparent !important;
+            backdrop-filter: none;
+        }
+        .navbar-solid {
+            background: rgba(46, 125, 50, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white !important;
+        }
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        .nav-link:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        /* Card Styles */
+        .card-custom {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card-custom:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .feature-icon i {
+            font-size: 35px;
+            color: white;
+        }
+
+        .rating-star {
+            color: #ffc107;
+            font-size: 1.2rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+        .testimonial-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stats-counter {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 30px;
+            padding: 60px 40px;
+            color: white;
+        }
+
+        .offcanvas-dark {
+            background: #1a472a;
+        }
+
+        /* Download Modal Styles */
+        .download-modal-content {
+            text-align: center;
+            padding: 20px;
+        }
+        .github-icon {
+            font-size: 4rem;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+        }
+        .copy-btn {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .copy-btn:hover {
+            background: #e9ecef;
+        }
+        .feature-list-item {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+            transition: 0.2s;
+        }
+        .feature-list-item:hover {
+            background: #e8f5e9;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .stats-counter {
+                font-size: 1.8rem;
+            }
+            .cta-section {
+                padding: 40px 20px;
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+        }
